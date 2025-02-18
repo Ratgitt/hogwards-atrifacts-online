@@ -9,5 +9,4 @@ public class HogwardsArtifactsOnlineApplication {
     public static void main(String[] args) {
         SpringApplication.run(HogwardsArtifactsOnlineApplication.class, args);
     }
-
 }

@@ -1,0 +1,15 @@
+services:
+  hogwards_postgres:
+    image: postgres:15
+    container_name: hogwards_postgres_container
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ratsql
+      POSTGRES_DB: hogwards_db
+    ports:
+      - 5433:5432
+    volumes:
+      - hogwards_pg_data:/var/lib/postgresql/data
+
+volumes:
+  hogwards_pg_data:

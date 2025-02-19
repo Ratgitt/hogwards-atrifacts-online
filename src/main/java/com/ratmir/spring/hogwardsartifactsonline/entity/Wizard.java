@@ -22,11 +22,12 @@ public class Wizard {
     private String name;
 
     @OneToMany(mappedBy = "owner", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private List<Artifact> artifacts = new ArrayList<>();
+    private List<Artifact> artifacts;
 
     public Wizard(Long id, String name) {
         this.id = id;
         this.name = name;
+        this.artifacts = new ArrayList<>();
     }
 
     public void addArtifacts(Artifact... artifacts) {

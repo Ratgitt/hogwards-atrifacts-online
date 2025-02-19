@@ -1,6 +1,8 @@
-package com.ratmir.spring.hogwardsartifactsonline.util.exception;
+package com.ratmir.spring.hogwardsartifactsonline.util.exception.handler;
 
 import com.ratmir.spring.hogwardsartifactsonline.dto.Result;
+import com.ratmir.spring.hogwardsartifactsonline.util.exception.ArtifactNotFoundException;
+import com.ratmir.spring.hogwardsartifactsonline.util.exception.WizardNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
@@ -16,9 +18,9 @@ import java.util.Map;
 @RestControllerAdvice
 public class ExceptionHandlerAdvice {
 
-    @ExceptionHandler(ArtifactNotFoundException.class)
+    @ExceptionHandler({ArtifactNotFoundException.class, WizardNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    Result handleArtifactNotFoundException(ArtifactNotFoundException ex) {
+    Result handleArtifactNotFoundException(RuntimeException ex) {
         return Result.builder()
                 .flag(false)
                 .code(HttpStatus.NOT_FOUND.value())

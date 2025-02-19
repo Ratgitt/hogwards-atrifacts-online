@@ -48,8 +48,7 @@ public class ArtifactService {
         artifact.setDescription(newArtifactDto.description());
         artifact.setImageUrl(newArtifactDto.imageUrl());
 
-        var updatedArtifact = artifactRepository.save(artifact);
-        return artifactConverter.toArtifactDto(updatedArtifact);
+        return artifactConverter.toArtifactDto(artifact);
     }
 
     public void delete(Long artifactId) {

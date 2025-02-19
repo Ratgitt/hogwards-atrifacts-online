@@ -1,4 +1,4 @@
-package com.ratmir.spring.hogwardsartifactsonline.artifact;
+package com.ratmir.spring.hogwardsartifactsonline.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ratmir.spring.hogwardsartifactsonline.dto.ArtifactDto;

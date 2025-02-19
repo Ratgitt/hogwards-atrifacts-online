@@ -3,7 +3,7 @@ package com.ratmir.spring.hogwardsartifactsonline.service;
 import com.ratmir.spring.hogwardsartifactsonline.dto.ArtifactDto;
 import com.ratmir.spring.hogwardsartifactsonline.entity.Artifact;
 import com.ratmir.spring.hogwardsartifactsonline.util.converter.ArtifactConverter;
-import com.ratmir.spring.hogwardsartifactsonline.util.exception.ArtifactNotFoundException;
+import com.ratmir.spring.hogwardsartifactsonline.util.exception.ObjectNotFoundException;
 import com.ratmir.spring.hogwardsartifactsonline.repository.ArtifactRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ public class ArtifactService {
     public ArtifactDto findById(Long artifactId) {
         return artifactRepository.findById(artifactId)
                 .map(artifactConverter::toArtifactDto)
-                .orElseThrow(() -> new ArtifactNotFoundException(artifactId));
+                .orElseThrow(() -> new ObjectNotFoundException("artifact", artifactId));
     }
 
     public List<ArtifactDto> findAll() {
@@ -42,7 +42,7 @@ public class ArtifactService {
 
     public ArtifactDto update(Long artifactId, ArtifactDto newArtifactDto) {
         Artifact artifact = artifactRepository.findById(artifactId)
-                .orElseThrow(() -> new ArtifactNotFoundException(artifactId));
+                .orElseThrow(() -> new ObjectNotFoundException("artifact", artifactId));
 
         artifact.setName(newArtifactDto.name());
         artifact.setDescription(newArtifactDto.description());
@@ -53,7 +53,7 @@ public class ArtifactService {
 
     public void delete(Long artifactId) {
         artifactRepository.findById(artifactId)
-                .orElseThrow(() -> new ArtifactNotFoundException(artifactId));
+                .orElseThrow(() -> new ObjectNotFoundException("artifact", artifactId));
         artifactRepository.deleteById(artifactId);
     }
 }

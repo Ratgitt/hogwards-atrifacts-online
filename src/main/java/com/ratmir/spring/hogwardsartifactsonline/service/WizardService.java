@@ -4,7 +4,7 @@ import com.ratmir.spring.hogwardsartifactsonline.dto.WizardDto;
 import com.ratmir.spring.hogwardsartifactsonline.entity.Wizard;
 import com.ratmir.spring.hogwardsartifactsonline.repository.WizardRepository;
 import com.ratmir.spring.hogwardsartifactsonline.util.converter.WizardConverter;
-import com.ratmir.spring.hogwardsartifactsonline.util.exception.WizardNotFoundException;
+import com.ratmir.spring.hogwardsartifactsonline.util.exception.ObjectNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,7 +24,7 @@ public class WizardService {
     public WizardDto findById(Long wizardId) {
         return wizardRepository.findById(wizardId)
                 .map(wizardConverter::toWizardDto)
-                .orElseThrow(() -> new WizardNotFoundException(wizardId));
+                .orElseThrow(() -> new ObjectNotFoundException("wizard", wizardId));
     }
 
     public List<WizardDto> findAll() {
@@ -41,7 +41,7 @@ public class WizardService {
 
     public WizardDto update(Long wizardId, WizardDto wizardDto) {
         var wizard = wizardRepository.findById(wizardId)
-                .orElseThrow(() -> new WizardNotFoundException(wizardId));
+                .orElseThrow(() -> new ObjectNotFoundException("wizard", wizardId));
 
         wizard.setName(wizardDto.name());
 
@@ -49,8 +49,11 @@ public class WizardService {
     }
 
     public void delete(Long wizardId) {
-        wizardRepository.findById(wizardId)
-                .orElseThrow(() -> new WizardNotFoundException(wizardId));
+        Wizard wizardToBeDeleted = wizardRepository.findById(wizardId)
+                .orElseThrow(() -> new ObjectNotFoundException("wizard", wizardId));
+
+        wizardToBeDeleted.releaseAssociatedArtifacts();
+
         wizardRepository.deleteById(wizardId);
     }
 }

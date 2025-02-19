@@ -2,6 +2,7 @@ package com.ratmir.spring.hogwardsartifactsonline.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.Hibernate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,7 +22,11 @@ public class Wizard {
 
     private String name;
 
-    @OneToMany(mappedBy = "owner", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(
+            mappedBy = "owner",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            fetch = FetchType.LAZY
+    )
     private List<Artifact> artifacts;
 
     public Wizard(Long id, String name) {
@@ -40,6 +45,12 @@ public class Wizard {
 
     public Integer getNumberOfArtifacts() {
         return this.artifacts.size();
+    }
+
+    public void releaseAssociatedArtifacts() {
+        Hibernate.initialize(artifacts); // Гарантированная загрузка списка
+        this.artifacts.forEach(artifact -> artifact.setOwner(null));
+        this.artifacts.clear();
     }
 }
 

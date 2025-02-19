@@ -1,3 +1,7 @@
+api:
+  endpoint:
+    base-url: /api/v1
+
 spring:
   docker:
     compose:

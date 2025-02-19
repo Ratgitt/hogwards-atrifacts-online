@@ -5,7 +5,7 @@ import com.ratmir.spring.hogwardsartifactsonline.entity.Artifact;
 import com.ratmir.spring.hogwardsartifactsonline.entity.Wizard;
 import com.ratmir.spring.hogwardsartifactsonline.repository.WizardRepository;
 import com.ratmir.spring.hogwardsartifactsonline.util.converter.WizardConverter;
-import com.ratmir.spring.hogwardsartifactsonline.util.exception.WizardNotFoundException;
+import com.ratmir.spring.hogwardsartifactsonline.util.exception.ObjectNotFoundException;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.*;
 
+import static com.ratmir.spring.hogwardsartifactsonline.util.exception.ObjectNotFoundException.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
@@ -77,11 +78,11 @@ class WizardServiceTest {
         given(wizardRepository.findById(nonExistingId)).willReturn(Optional.empty());
 
         //When
-        var exception = assertThrows(WizardNotFoundException.class,
+        var exception = assertThrows(ObjectNotFoundException.class,
                 () -> wizardService.findById(nonExistingId));
 
         //Then
-        assertThat(exception.getMessage()).isEqualTo(WizardNotFoundException.DEFAULT_MESSAGE + nonExistingId);
+        assertThat(exception.getMessage()).isEqualTo(WIZARD_NOT_FOUND_MESSAGE + nonExistingId);
         verify(wizardRepository, times(1)).findById(nonExistingId);
         verify(wizardConverter, never()).toWizardDto(any());
     }
@@ -163,9 +164,9 @@ class WizardServiceTest {
 
         given(wizardRepository.findById(nonExistingId)).willReturn(Optional.empty());
 
-        var exception = assertThrows(WizardNotFoundException.class,
+        var exception = assertThrows(ObjectNotFoundException.class,
                 () -> wizardService.update(nonExistingId, inputDto));
-        assertThat(exception.getMessage()).isEqualTo(WizardNotFoundException.DEFAULT_MESSAGE + nonExistingId);
+        assertThat(exception.getMessage()).isEqualTo(WIZARD_NOT_FOUND_MESSAGE + nonExistingId);
 
         verify(wizardRepository, times(1)).findById(nonExistingId);
     }
@@ -190,9 +191,9 @@ class WizardServiceTest {
     void testDeleteWizardNotFoundError() {
         Long wizardId = 1L;
         given(wizardRepository.findById(wizardId))
-                .willThrow(new WizardNotFoundException(wizardId));
+                .willThrow(new ObjectNotFoundException("wizard", wizardId));
 
-        assertThrows(WizardNotFoundException.class,
+        assertThrows(ObjectNotFoundException.class,
                 () -> wizardService.delete(wizardId));
 
         verify(wizardRepository, times(1)).findById(wizardId);

@@ -1,5 +1,6 @@
-package com.ratmir.spring.hogwardsartifactsonline.artifact;
+package com.ratmir.spring.hogwardsartifactsonline.service;
 
+import static com.ratmir.spring.hogwardsartifactsonline.util.exception.ObjectNotFoundException.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
@@ -9,9 +10,8 @@ import com.ratmir.spring.hogwardsartifactsonline.dto.WizardDto;
 import com.ratmir.spring.hogwardsartifactsonline.entity.Artifact;
 import com.ratmir.spring.hogwardsartifactsonline.entity.Wizard;
 import com.ratmir.spring.hogwardsartifactsonline.repository.ArtifactRepository;
-import com.ratmir.spring.hogwardsartifactsonline.service.ArtifactService;
 import com.ratmir.spring.hogwardsartifactsonline.util.converter.ArtifactConverter;
-import com.ratmir.spring.hogwardsartifactsonline.util.exception.ArtifactNotFoundException;
+import com.ratmir.spring.hogwardsartifactsonline.util.exception.ObjectNotFoundException;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -125,10 +125,10 @@ class ArtifactServiceTest {
         Long nonExistingId = -1L;
         given(artifactRepository.findById(nonExistingId)).willReturn(Optional.empty());
 
-        var exception = assertThrows(ArtifactNotFoundException.class,
+        var exception = assertThrows(ObjectNotFoundException.class,
                 () -> artifactService.findById(nonExistingId));
 
-        assertThat(exception.getMessage()).isEqualTo(ArtifactNotFoundException.DEFAULT_MESSAGE + nonExistingId);
+        assertThat(exception.getMessage()).isEqualTo(ARTIFACT_NOT_FOUND_MESSAGE + nonExistingId);
         verify(artifactRepository, times(1)).findById(nonExistingId);
         verify(artifactConverter, never()).toArtifactDto(any());
     }
@@ -214,33 +214,33 @@ class ArtifactServiceTest {
                 .build();
 
         given(artifactRepository.findById(artifactId)).willReturn(Optional.of(oldArtifactEntity));
-        given(artifactRepository.save(any(Artifact.class))).willReturn(updatedArtifactEntity);
-        given(artifactConverter.toArtifactDto(updatedArtifactEntity)).willReturn(expectedArtifactDto);
+        given(artifactConverter.toArtifactDto(any(Artifact.class))).willReturn(expectedArtifactDto);
 
         var updatedArtifactDto = artifactService.update(artifactId, newArtifactDto);
         assertThat(updatedArtifactDto).isEqualTo(expectedArtifactDto);
 
         verify(artifactRepository, times(1)).findById(artifactId);
-        verify(artifactRepository, times(1)).save(any(Artifact.class));
-        verify(artifactConverter, times(1)).toArtifactDto(updatedArtifactEntity);
+        verify(artifactConverter, times(1)).toArtifactDto(any(Artifact.class));
     }
 
     @Test
     @Order(6)
     void testUpdateNotFound() {
-        Long artifactId = 1L;
+        Long nonExistingId = 1L;
         var newArtifactDto = ArtifactDto.builder()
                 .name("newName")
                 .description("newDescription")
                 .imageUrl("newImageUrl")
                 .build();
 
-        given(artifactRepository.findById(artifactId)).willReturn(Optional.empty());
+        given(artifactRepository.findById(nonExistingId)).willReturn(Optional.empty());
 
-        assertThrows(ArtifactNotFoundException.class,
-                () -> artifactService.update(artifactId, newArtifactDto));
+        var exception = assertThrows(ObjectNotFoundException.class,
+                () -> artifactService.update(nonExistingId, newArtifactDto));
 
-        verify(artifactRepository, times(1)).findById(artifactId);
+        assertThat(exception.getMessage()).isEqualTo(ARTIFACT_NOT_FOUND_MESSAGE + nonExistingId);
+
+        verify(artifactRepository, times(1)).findById(nonExistingId);
     }
 
     @Test
@@ -272,10 +272,10 @@ class ArtifactServiceTest {
         //Given
         Long artifactId = 1L;
         given(artifactRepository.findById(artifactId))
-                .willThrow(new ArtifactNotFoundException(artifactId));
+                .willThrow(new ObjectNotFoundException("artifact", artifactId));
 
         //When
-        assertThrows(ArtifactNotFoundException.class,
+        assertThrows(ObjectNotFoundException.class,
                 () -> artifactService.delete(artifactId));
 
         //Then

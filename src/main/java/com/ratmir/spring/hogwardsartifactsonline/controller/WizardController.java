@@ -1,77 +1,76 @@
 package com.ratmir.spring.hogwardsartifactsonline.controller;
 
-import com.ratmir.spring.hogwardsartifactsonline.dto.ArtifactDto;
-import com.ratmir.spring.hogwardsartifactsonline.service.ArtifactService;
 import com.ratmir.spring.hogwardsartifactsonline.dto.Result;
+import com.ratmir.spring.hogwardsartifactsonline.dto.WizardDto;
+import com.ratmir.spring.hogwardsartifactsonline.service.WizardService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
+@RequestMapping("${api.endpoint.base-url}/wizards")
 @RequiredArgsConstructor
-@RequestMapping("${api.endpoint.base-url}/artifacts")
-public class ArtifactController {
+public class WizardController {
 
-    private final ArtifactService artifactService;
+    private final WizardService wizardService;
 
-    @GetMapping("/{artifactId}")
-    public Result findArtifactById(@PathVariable Long artifactId) {
-        var artifactDto = artifactService.findById(artifactId);
+    @GetMapping("/{wizardId}")
+    public Result findWizardById(@PathVariable Long wizardId) {
+        var wizardDto = wizardService.findById(wizardId);
         return Result.builder()
                 .flag(true)
                 .code(HttpStatus.OK.value())
                 .message("Find One Success")
-                .data(artifactDto)
+                .data(wizardDto)
                 .build();
     }
 
-    @GetMapping()
-    public Result findAllArtifacts() {
-        List<ArtifactDto> artifactDtoList = artifactService.findAll();
+    @GetMapping
+    public Result findAllWizards() {
+        var wizardDtos = wizardService.findAll();
         return Result.builder()
                 .flag(true)
                 .code(HttpStatus.OK.value())
                 .message("Find All Success")
-                .data(artifactDtoList)
+                .data(wizardDtos)
                 .build();
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Result addArtifact(@Valid @RequestBody ArtifactDto artifactDto) {
-        var savedArtifactDto = artifactService.save(artifactDto);
+    public Result addWizard(@Valid @RequestBody WizardDto wizardDto) {
+        var savedWizardDto = wizardService.save(wizardDto);
         return Result.builder()
                 .flag(true)
                 .code(HttpStatus.CREATED.value())
                 .message("Add Success")
-                .data(savedArtifactDto)
+                .data(savedWizardDto)
                 .build();
     }
 
-    @PutMapping("/{artifactId}")
-    public Result updateArtifact(
-            @PathVariable Long artifactId,
-            @Valid @RequestBody ArtifactDto artifactDto
+    @PutMapping("/{wizardId}")
+    public Result updateWizard(
+            @PathVariable Long wizardId,
+            @Valid @RequestBody WizardDto wizardDto
     ) {
-        var updatedArtifactDto = artifactService.update(artifactId, artifactDto);
+        var updatedWizardDto = wizardService.update(wizardId, wizardDto);
         return Result.builder()
                 .flag(true)
                 .code(HttpStatus.OK.value())
                 .message("Update Success")
-                .data(updatedArtifactDto)
+                .data(updatedWizardDto)
                 .build();
     }
 
-    @DeleteMapping("/{artifactId}")
-    public Result deleteArtifact(@PathVariable Long artifactId) {
-        artifactService.delete(artifactId);
+    @DeleteMapping("/{wizardId}")
+    public Result deleteWizard(@PathVariable Long wizardId) {
+        wizardService.delete(wizardId);
         return Result.builder()
                 .flag(true)
                 .code(HttpStatus.NO_CONTENT.value())
                 .message("Delete Success")
+                .data(null)
                 .build();
     }
 }

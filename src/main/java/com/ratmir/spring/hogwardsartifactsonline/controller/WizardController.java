@@ -73,4 +73,15 @@ public class WizardController {
                 .data(null)
                 .build();
     }
+
+    @PutMapping("/{wizardId}/artifacts/{artifactId}")
+    public Result assignArtifact(@PathVariable Long wizardId, @PathVariable Long artifactId) {
+        wizardService.assignArtifact(wizardId, artifactId);
+        return Result.builder()
+                .flag(true)
+                .code(HttpStatus.OK.value())
+                .message("Artifact Assignment Success")
+                .data(null)
+                .build();
+    }
 }

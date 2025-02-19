@@ -240,4 +240,54 @@ class WizardControllerTest {
                 .andExpect(jsonPath("$.message").value(WIZARD_NOT_FOUND_MESSAGE + nonExistingId))
                 .andExpect(jsonPath("$.data").isEmpty());
     }
+
+    @Test
+    @Order(10)
+    void testAssignArtifactSuccess() throws Exception {
+        doNothing().when(wizardService).assignArtifact(2L, 3L);
+
+        mockMvc.perform(put(BASE_URL + "/wizards/2/artifacts/3")
+                        .accept(APPLICATION_JSON))
+                .andExpect(jsonPath("$.flag").value(true))
+                .andExpect(jsonPath("$.code").value(HttpStatus.OK.value()))
+                .andExpect(jsonPath("$.message").value("Artifact Assignment Success"))
+                .andExpect(jsonPath("$.data").isEmpty());
+
+    }
+
+    @Test
+    @Order(11)
+    void testAssignArtifactErrorWithNonExistingWizardId() throws Exception {
+
+        Long nonExistingWizardId = 5L;
+        Long artifactId = 2L;
+
+        doThrow(new ObjectNotFoundException("wizard", nonExistingWizardId))
+                .when(wizardService).assignArtifact(nonExistingWizardId, artifactId);
+
+        mockMvc.perform(put(BASE_URL + "/wizards/" + nonExistingWizardId +"/artifacts/" + artifactId)
+                        .accept(APPLICATION_JSON))
+                .andExpect(jsonPath("$.flag").value(false))
+                .andExpect(jsonPath("$.code").value(HttpStatus.NOT_FOUND.value()))
+                .andExpect(jsonPath("$.message").value(WIZARD_NOT_FOUND_MESSAGE + nonExistingWizardId))
+                .andExpect(jsonPath("$.data").isEmpty());
+    }
+
+    @Test
+    @Order(12)
+    void testAssignArtifactErrorWithNonExistingArtifactId() throws Exception {
+        Long wizardId = 5L;
+        Long nonExistingArtifactId = 2L;
+
+        doThrow(new ObjectNotFoundException("artifact", nonExistingArtifactId))
+                .when(wizardService).assignArtifact(wizardId, nonExistingArtifactId);
+
+        mockMvc.perform(put(BASE_URL + "/wizards/" + wizardId +"/artifacts/" + nonExistingArtifactId)
+                        .accept(APPLICATION_JSON))
+                .andExpect(jsonPath("$.flag").value(false))
+                .andExpect(jsonPath("$.code").value(HttpStatus.NOT_FOUND.value()))
+                .andExpect(jsonPath("$.message").value(ARTIFACT_NOT_FOUND_MESSAGE + nonExistingArtifactId))
+                .andExpect(jsonPath("$.data").isEmpty());
+
+    }
 }

@@ -2,6 +2,7 @@ package com.ratmir.spring.hogwardsartifactsonline.service;
 
 import com.ratmir.spring.hogwardsartifactsonline.dto.WizardDto;
 import com.ratmir.spring.hogwardsartifactsonline.entity.Wizard;
+import com.ratmir.spring.hogwardsartifactsonline.repository.ArtifactRepository;
 import com.ratmir.spring.hogwardsartifactsonline.repository.WizardRepository;
 import com.ratmir.spring.hogwardsartifactsonline.util.converter.WizardConverter;
 import com.ratmir.spring.hogwardsartifactsonline.util.exception.ObjectNotFoundException;
@@ -18,8 +19,9 @@ import static java.util.stream.Collectors.*;
 @Transactional
 public class WizardService {
 
-    private final WizardRepository wizardRepository;
     private final WizardConverter wizardConverter;
+    private final WizardRepository wizardRepository;
+    private final ArtifactRepository artifactRepository;
 
     public WizardDto findById(Long wizardId) {
         return wizardRepository.findById(wizardId)
@@ -52,8 +54,21 @@ public class WizardService {
         Wizard wizardToBeDeleted = wizardRepository.findById(wizardId)
                 .orElseThrow(() -> new ObjectNotFoundException("wizard", wizardId));
 
-        wizardToBeDeleted.releaseAssociatedArtifacts();
+        wizardToBeDeleted.removeAllArtifacts();
 
         wizardRepository.deleteById(wizardId);
+    }
+
+    public void assignArtifact(Long wizardId, Long artifactId) {
+        var wizard = wizardRepository.findById(wizardId)
+                .orElseThrow(() -> new ObjectNotFoundException("wizard", wizardId));
+
+        var artifactToBeAssigned = artifactRepository.findById(artifactId)
+                .orElseThrow(() -> new ObjectNotFoundException("artifact", artifactId));
+
+        if(artifactToBeAssigned.getOwner() != null) {
+            artifactToBeAssigned.getOwner().removeArtifact(artifactToBeAssigned);
+        }
+        wizard.addArtifact(artifactToBeAssigned);
     }
 }

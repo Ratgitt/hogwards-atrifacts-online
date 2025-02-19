@@ -3,6 +3,7 @@ package com.ratmir.spring.hogwardsartifactsonline.service;
 import com.ratmir.spring.hogwardsartifactsonline.dto.WizardDto;
 import com.ratmir.spring.hogwardsartifactsonline.entity.Artifact;
 import com.ratmir.spring.hogwardsartifactsonline.entity.Wizard;
+import com.ratmir.spring.hogwardsartifactsonline.repository.ArtifactRepository;
 import com.ratmir.spring.hogwardsartifactsonline.repository.WizardRepository;
 import com.ratmir.spring.hogwardsartifactsonline.util.converter.WizardConverter;
 import com.ratmir.spring.hogwardsartifactsonline.util.exception.ObjectNotFoundException;
@@ -25,6 +26,8 @@ class WizardServiceTest {
 
     @Mock
     WizardRepository wizardRepository;
+    @Mock
+    ArtifactRepository artifactRepository;
 
     @Mock
     WizardConverter wizardConverter;
@@ -197,5 +200,57 @@ class WizardServiceTest {
                 () -> wizardService.delete(wizardId));
 
         verify(wizardRepository, times(1)).findById(wizardId);
+    }
+
+    @Test
+    @Order(9)
+    void testAssignArtifactSuccess() {
+        var a = Artifact.builder()
+                .id(2L)
+                .name("Invisibility Cloak")
+                .description("An invisibility cloak is used to make the wearer invisible.")
+                .imageUrl("ImageUrl")
+                .build();
+
+        var w2 = new Wizard(2L, "Harry Potter");
+        w2.addArtifact(a);
+
+        var w3 = new Wizard(3L, "Neville Longbottom");
+
+        given(artifactRepository.findById(2L)).willReturn(Optional.of(a));
+        given(wizardRepository.findById(3L)).willReturn(Optional.of(w3));
+
+        wizardService.assignArtifact(3L, 2L);
+
+        assertThat(a.getOwner().getId()).isEqualTo(3L);
+        assertThat(w3.getArtifacts()).contains(a);
+        assertThat(w2.getArtifacts()).doesNotContain(a);
+    }
+
+    @Test
+    @Order(10)
+    void testAssignArtifactErrorWithNonExistingWizardId() {
+
+        given(wizardRepository.findById(3L)).willReturn(Optional.empty());
+
+        var exception = assertThrows(ObjectNotFoundException.class,
+                () -> wizardService.assignArtifact(3L, 2L));
+
+        assertThat(exception).hasMessage(WIZARD_NOT_FOUND_MESSAGE + 3L);
+    }
+
+    @Test
+    @Order(11)
+    void testAssignArtifactErrorWithNonExistingArtifactId() {
+
+        var w3 = new Wizard(3L, "Neville Longbottom");
+
+        given(wizardRepository.findById(3L)).willReturn(Optional.of(w3));
+        given(artifactRepository.findById(2L)).willReturn(Optional.empty());
+
+        var exception = assertThrows(ObjectNotFoundException.class,
+                () -> wizardService.assignArtifact(3L, 2L));
+
+        assertThat(exception).hasMessage(ARTIFACT_NOT_FOUND_MESSAGE + 2L);
     }
 }

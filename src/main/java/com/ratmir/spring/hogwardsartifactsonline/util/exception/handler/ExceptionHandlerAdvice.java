@@ -16,6 +16,8 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class ExceptionHandlerAdvice {
+    
+    public static final String VALIDATION_ERROR_MESSAGE = "Provided arguments are invalid, see data for details.";
 
     @ExceptionHandler(ObjectNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -40,7 +42,7 @@ public class ExceptionHandlerAdvice {
         return Result.builder()
                 .flag(false)
                 .code(HttpStatus.BAD_REQUEST.value())
-                .message("Provided arguments are invalid, see data for details")
+                .message(VALIDATION_ERROR_MESSAGE)
                 .data(map)
                 .build();
     }

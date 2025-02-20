@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.ratmir.spring.hogwardsartifactsonline.util.exception.ObjectNotFoundException.*;
+import static com.ratmir.spring.hogwardsartifactsonline.util.exception.handler.ExceptionHandlerAdvice.*;
 import static org.mockito.BDDMockito.*;
 import static org.springframework.http.MediaType.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -184,7 +185,7 @@ class ArtifactControllerTest {
                         .content(json))
                 .andExpect(jsonPath("$.flag").value(false))
                 .andExpect(jsonPath("$.code").value(HttpStatus.BAD_REQUEST.value()))
-                .andExpect(jsonPath("$.message").value("Provided arguments are invalid, see data for details"))
+                .andExpect(jsonPath("$.message").value(VALIDATION_ERROR_MESSAGE))
                 .andExpect(jsonPath("$.data.name").value("Name is required"))
                 .andExpect(jsonPath("$.data.description").value("Description is required"));
     }

@@ -200,12 +200,6 @@ class ArtifactServiceTest {
                 .description("oldDescription")
                 .imageUrl("oldImageUrl")
                 .build();
-        var updatedArtifactEntity = Artifact.builder()
-                .id(1L)
-                .name("newName")
-                .description("newDescription")
-                .imageUrl("newImageUrl")
-                .build();
         var expectedArtifactDto = ArtifactDto.builder()
                 .id(1L)
                 .name("newName")

@@ -10,3 +10,8 @@ INSERT INTO artifact (name, description, image_url, wizard_id) VALUES
 ('The Marauder''s Map', 'A magical map of Hogwarts created by Remus Lupin, Peter Pettigrew, Sirius Black, and James Potter while they were students at Hogwarts.', 'ImageUrl', 2),
 ('The Sword Of Gryffindor', 'A goblin-made sword adorned with large rubies on the pommel. It was once owned by Godric Gryffindor, one of the medieval founders of Hogwarts.', 'ImageUrl', 3),
 ('Resurrection Stone', 'The Resurrection Stone allows the holder to bring back deceased loved ones, in a semi-physical form, and communicate with them.', 'ImageUrl', NULL);
+
+INSERT INTO hogwards_user(username, password, enabled, roles) VALUES
+('john', '123456', true, 'admin user'),
+('eric', '654321', true, 'user'),
+('tom', 'qwerty', false, 'user');

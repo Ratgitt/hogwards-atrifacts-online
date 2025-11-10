@@ -3,14 +3,40 @@ api:
     base-url: /api/v1
 
 spring:
+  liquibase:
+    enabled: true
+    liquibase-schema: liquibase
+  datasource:
+    url: jdbc:postgresql://localhost:5433/hogwards_db
+    username: postgres
+    password: ratsql
+    driver-class-name: org.postgresql.Driver
   docker:
     compose:
       skip:
         in-tests: false
   jpa:
+    open-in-view: false
     hibernate:
       ddl-auto: validate
-    properties:
-      hibernate:
-        format_sql: true
-        show_sql: true
+    properties.hibernate:
+      format_sql: true
+      show_sql: true
+#      hbm2ddl.auto: validate
+      jdbc:
+        batch_size: 50
+        fetch_size: 50
+server:
+  port: 8085
+
+logging:
+  level:
+    org.springframework.jdbc.core: TRACE
+
+rabbitmq:
+  exchanges:
+    internal: internal.exchange
+  queues:
+    notification: notification.queue
+  routing-keys:
+    internal-notification: internal.notification.routing-key

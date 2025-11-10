@@ -1,0 +1,7 @@
+ext {
+    versions = [
+            'querydsl': '5.1.0',
+            'mapstruct': '1.6.3',
+            'lombok_mapstruct': '0.1.0'
+    ]
+}

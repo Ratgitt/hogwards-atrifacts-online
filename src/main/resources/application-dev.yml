@@ -1,0 +1,14 @@
+spring:
+  liquibase:
+    enabled: false
+  datasource:
+    url: jdbc:postgresql://localhost:5433/test_db
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties.hibernate:
+      format_sql: true
+      show_sql:   true
+  docker:
+    compose:
+      enabled: false

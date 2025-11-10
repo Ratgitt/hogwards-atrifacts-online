@@ -1,0 +1,6 @@
+spring:
+  liquibase:
+    enabled: true
+  docker:
+    compose:
+      enabled: false

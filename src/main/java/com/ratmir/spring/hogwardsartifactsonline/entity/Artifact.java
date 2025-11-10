@@ -9,6 +9,7 @@ import lombok.*;
 @Setter
 @Builder
 @Entity
+@Table(name = "artifact")
 public class Artifact {
 
     @Id
@@ -22,7 +23,7 @@ public class Artifact {
 
     private String imageUrl;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "wizard_id", referencedColumnName = "id")
     private Wizard owner;
 

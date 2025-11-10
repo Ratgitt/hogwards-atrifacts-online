@@ -15,6 +15,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
+@Table(name = "wizard")
 public class Wizard {
 
     @Id
